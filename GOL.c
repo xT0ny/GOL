@@ -1,7 +1,8 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
-#include <time.h>
+#include <time.h> 
 
 #define ALIVE true
 #define DEAD false
@@ -43,12 +44,12 @@ char *set_random_color(){
     return final_cell_color;
 }
 
-void init(struct cell** table){
+void init(struct cell table[H][L]){
     for (int i = 0; i < H; i++){
         for (int j = 0; j < L; j++){
             table[i][j].state = DEAD;
             table[i][j].neighbours = 0;
-            table[i][j].color = ' ';    
+            table[i][j].color = " ";    
         }
     }
     
@@ -63,7 +64,7 @@ void init(struct cell** table){
 }
 
 void main(){
-    struct cell** table[H][L];
-    init(&table);
+    struct cell table[H][L];
+    init(table);
     return;
 }
