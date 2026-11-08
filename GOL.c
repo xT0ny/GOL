@@ -6,65 +6,53 @@
 
 #define ALIVE true
 #define DEAD false
-#define RED "\x1b[31m"
-#define BLUE "\x1b[34m"
-#define GREEN "\x1b[32m"
+#define RED "\e[0;31m"
+#define BLU "\e[0;34m"
+#define GRN "\e[0;32m"
+#define WHT "\e[0;37m"
 
-const int H = 50;
-const int L = 50;
+#define H 50
+#define L 50
 
 typedef enum colors{
     COLOR_RED,
     COLOR_BLUE,
     COLOR_GREEN,
+    COLOR_WHITE,
 }COLOR;
 
 struct cell{
     int neighbours;
     bool state;
-    char *color;
+    COLOR color;
 };
 
-char *set_random_color(){
-    COLOR cell_color = rand()%3;
-    char *final_cell_color;
-        switch(cell_color){
-            case 1:
-                final_cell_color = RED;
-                break;
-
-            case 2:
-                final_cell_color = BLUE;
-                break;
-            
-            case 3:
-                final_cell_color = GREEN;
-                break;
-        }
-    return final_cell_color;
-}
 
 void init(struct cell table[H][L]){
     for (int i = 0; i < H; i++){
         for (int j = 0; j < L; j++){
             table[i][j].state = DEAD;
             table[i][j].neighbours = 0;
-            table[i][j].color = " ";    
+            table[i][j].color = COLOR_WHITE;    
         }
     }
-    
+
     srand(time(NULL));
-    int i = rand() %51;
-    int j = rand() %51;
-    if (table[i][j].state == DEAD){
-        table[i][j].state = ALIVE;
-        table[i][j].color = set_random_color();
+    int cell_counter = 0;
+    while(cell_counter < 15){
+        int i = rand() % L;
+        int j = rand() % H;
+        if (table[i][j].state == DEAD){
+            table[i][j].state = ALIVE;
+            table[i][j].color = rand() % 3;
+            cell_counter++;
+        }
     }
 
 }
 
-void main(){
+int main(void){
     struct cell table[H][L];
     init(table);
-    return;
+    return 0;
 }
