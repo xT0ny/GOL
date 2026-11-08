@@ -3,9 +3,11 @@
 #include <stdbool.h>
 #include <string.h>
 #include <time.h> 
+#include <windows.h>
 
 #define ALIVE true
 #define DEAD false
+
 #define RED "\e[0;31m"
 #define BLU "\e[0;34m"
 #define GRN "\e[0;32m"
@@ -39,7 +41,7 @@ void init(struct cell table[H][L]){
 
     srand(time(NULL));
     int cell_counter = 0;
-    while(cell_counter < 15){
+    while(cell_counter < 30){
         int i = rand() % L;
         int j = rand() % H;
         if (table[i][j].state == DEAD){
@@ -51,8 +53,30 @@ void init(struct cell table[H][L]){
 
 }
 
+void render(struct cell table[H][L]){
+    for (int i = 0; i < H; i++){
+        for (int j = 0; j < L; j++){
+            if (table[i][j].color == COLOR_RED){
+                printf(RED "\u2588");
+            }
+            else if (table[i][j].color == COLOR_BLUE){
+                printf(BLU "\u2588");
+            }
+            else if (table[i][j].color == COLOR_GREEN){
+                printf(GRN "\u2588");
+            }
+            else {
+                printf(WHT "\u2588");
+            }
+        }
+        printf("\n");
+    }
+}
+
 int main(void){
+    SetConsoleOutputCP(CP_UTF8);
     struct cell table[H][L];
     init(table);
+    render(table);
     return 0;
 }
