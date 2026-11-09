@@ -1,7 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
-#include <string.h>
 #include <time.h> 
 #include <windows.h>
 
@@ -24,33 +23,74 @@ typedef enum colors{
 }COLOR;
 
 struct cell{
-    int neighbours;
     bool state;
     COLOR color;
 };
 
+int count_neighbours(struct cell table[H][L], int i, int j){
+    int count = 0;
+    for (int h = -1; h <= 1; h++){
+        for (int l = -1; l <= 1; l++){
+            if(h == 0 && l == 0){
+                continue;
+            }
+            if (i + h >= 0 && i + h < H && j + l >= 0 && j + l < L && table[i+h][j+l].state == ALIVE){
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
+void update(struct cell table[H][L]){
+    struct cell next[H][L];
+    for (int i = 0; i < H; i++){
+        for(int j = 0; j < L; j++){
+            next[i][j] = table[i][j];            
+            int neighbours = count_neighbours(table, i, j);
+            if(table[i][j].state == DEAD){              
+              if(neighbours == 3){
+                next[i][j].state = ALIVE;
+                next[i][j].color = rand()%3;
+              }
+            }
+            else{
+                if(neighbours < 2 || neighbours > 3){
+                    next[i][j].state = DEAD;
+                    next[i][j].color = COLOR_WHITE;
+                }
+            }
+        }
+    }
+    for (int i = 0; i < H; i++){
+        for (int j = 0; j < L; j++){
+            table[i][j] = next[i][j];
+        }
+    }
+    return;
+}
 
 void init(struct cell table[H][L]){
     for (int i = 0; i < H; i++){
         for (int j = 0; j < L; j++){
             table[i][j].state = DEAD;
-            table[i][j].neighbours = 0;
             table[i][j].color = COLOR_WHITE;    
         }
     }
 
     srand(time(NULL));
     int cell_counter = 0;
-    while(cell_counter < 30){
+    while(cell_counter < 600){
         int i = rand() % L;
         int j = rand() % H;
         if (table[i][j].state == DEAD){
             table[i][j].state = ALIVE;
             table[i][j].color = rand() % 3;
+
             cell_counter++;
         }
     }
-
+    return;
 }
 
 void render(struct cell table[H][L]){
@@ -73,10 +113,18 @@ void render(struct cell table[H][L]){
     }
 }
 
+void clear_term(void){
+    Sleep(1000);
+    system("cls");
+}
+
 int main(void){
     SetConsoleOutputCP(CP_UTF8);
     struct cell table[H][L];
     init(table);
-    render(table);
-    return 0;
+    while(1){
+        clear_term();
+        render(table);
+        update(table);
+    }
 }
